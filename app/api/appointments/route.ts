@@ -1,0 +1,12 @@
+import { env } from "cloudflare:workers";
+import { z } from "zod";
+import { services } from "@/lib/catalog";
+export const dynamic = "force-dynamic";
+const schema = z.object({ petType: z.enum(["Cachorro", "Gato", "Outro"]), petName: z.string().min(1).max(80), breed: z.string().max(100).optional(), size: z.enum(["Pequeno", "Médio", "Grande"]), age: z.string().max(30).optional(), notes: z.string().max(1000).optional(), service: z.string(), date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), time: z.enum(["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"]), name: z.string().min(2).max(120), phone: z.string().min(8).max(30), email: z.string().email() });
+export async function POST(request: Request) {
+  try { if (!env.DB) throw new Error("DB unavailable"); const input = schema.parse(await request.json()); if (!services.some((item) => item.id === input.service)) return Response.json({ error: "Serviço inválido" }, { status: 400 }); if (input.date < new Date().toISOString().slice(0, 10)) return Response.json({ error: "Escolha uma data futura" }, { status: 400 }); const id = crypto.randomUUID(); const userId = request.headers.get("oai-authenticated-user-id") ?? "local-preview";
+    await env.DB.prepare(`INSERT INTO appointments (id, user_id, pet_name, pet_type, breed, size, age, notes, service_id, date, time, professional_id, customer_name, phone, email, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'equipe-1', ?, ?, ?, 'pending')`).bind(id, userId, input.petName, input.petType, input.breed ?? null, input.size, input.age ?? null, input.notes ?? null, input.service, input.date, input.time, input.name, input.phone, input.email).run();
+    return Response.json({ id, status: "pending" }, { status: 201 });
+  } catch (error) { const message = error instanceof Error && /UNIQUE|constraint/i.test(error.message) ? "Este horário não está mais disponível. Escolha outro." : "Não foi possível registrar o agendamento."; return Response.json({ error: message }, { status: 409 }); }
+}
+export async function GET(request: Request) { if (!env.DB) return Response.json({ error: "Agenda indisponível" }, { status: 503 }); const date = new URL(request.url).searchParams.get("date") ?? new Date().toISOString().slice(0, 10); const result = await env.DB.prepare("SELECT id, pet_name as petName, customer_name as customerName, service_id as service, time, status FROM appointments WHERE date = ? ORDER BY time").bind(date).all(); return Response.json({ date, appointments: result.results ?? [] }); }
