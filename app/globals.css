@@ -42,6 +42,9 @@ img { max-width: 100%; }
 .icon-button { display: grid; width: 42px; height: 42px; place-items: center; border: 0; border-radius: 50%; background: transparent; cursor: pointer; transition: .2s ease; }
 .icon-button:hover { background: #f1eadf; transform: translateY(-1px); }
 .icon-button svg { width: 20px; height: 20px; }
+.header-icon-action { position: relative; width: 44px; height: 44px; overflow: visible; }
+.header-icon-action svg { width: 24px; height: 24px; stroke-width: 1.9; }
+.header-icon-action[aria-label="Minha conta"] svg { width: 26px; height: 26px; }
 .cart-count { position: absolute; right: -1px; top: -2px; display: grid; min-width: 19px; height: 19px; place-items: center; border: 2px solid #fffdf8; border-radius: 99px; background: #8b1937; color: white; font-size: .65rem; font-weight: 800; }
 .header-nav { display: flex; min-height: 42px; align-items: center; justify-content: center; gap: 26px; font-size: .86rem; font-weight: 700; }
 .header-nav a { position: relative; padding: 11px 0; }
@@ -84,6 +87,7 @@ img { max-width: 100%; }
 .category-card { min-height: 178px; border: 1px solid #e7dfd3; border-radius: 26px; background: white; padding: 22px 18px; box-shadow: 0 12px 35px rgba(40,30,25,.055); transition: .22s ease; }
 .category-card:hover { border-color: #f3b91f; transform: translateY(-6px); box-shadow: 0 18px 40px rgba(40,30,25,.1); }
 .category-icon { display: grid; width: 54px; height: 54px; place-items: center; border-radius: 18px; background: #fff1be; color: #8b1937; }
+.category-emoji { display: grid; width: 58px; height: 58px; place-items: center; border-radius: 19px; font-family: "Segoe UI Emoji", "Apple Color Emoji", sans-serif; font-size: 2rem; line-height: 1; }
 .category-card h3 { margin: 21px 0 6px; font-size: 1rem; }
 .category-card p { margin: 0; color: #766f6d; font-size: .8rem; line-height: 1.5; }
 .product-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
@@ -96,6 +100,7 @@ img { max-width: 100%; }
 .product-card:hover .product-photo { transform: scale(1.035); }
 .product-badge { position: absolute; left: 14px; top: 14px; z-index: 2; border-radius: 99px; background: #17151a; padding: 7px 10px; color: #f8d75d; font-size: .65rem; font-weight: 900; letter-spacing: .05em; }
 .favorite-button { position: absolute; right: 14px; top: 14px; z-index: 2; display: grid; width: 36px; height: 36px; place-items: center; border: 0; border-radius: 50%; background: white; color: #554e4e; box-shadow: 0 6px 18px rgba(30,25,22,.1); cursor: pointer; }
+.favorite-button.is-favorite { color: #8b1937; background: #fff3f4; }
 .favorite-button svg { width: 17px; }
 .product-info { padding: 20px; }
 .product-info small { color: #857d79; font-weight: 700; }
@@ -112,6 +117,7 @@ img { max-width: 100%; }
 .image-frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .image-frame::after { position: absolute; inset: 0; border: 1px solid rgba(255,255,255,.25); border-radius: inherit; content: ""; pointer-events: none; }
 .story-copy h2, .service-copy h1 { margin: 12px 0 22px; font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4.8rem); font-weight: 800; letter-spacing: -.055em; line-height: .96; }
+.story-copy h2 { font-family: var(--font-display); font-size: clamp(2.35rem, 3.8vw, 3.8rem); font-weight: 600; letter-spacing: -.035em; line-height: 1.08; text-wrap: balance; }
 .grooming-hero .service-copy h1 { max-width: 670px; font-family: var(--font-display); font-size: clamp(2.8rem, 4.2vw, 4.1rem); font-weight: 600; letter-spacing: -.035em; line-height: 1.06; text-wrap: balance; }
 .story-copy p, .service-copy p { color: #6d6665; line-height: 1.75; }
 .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-block: 28px; }
@@ -123,8 +129,15 @@ img { max-width: 100%; }
 .service-band-inner { position: relative; display: grid; grid-template-columns: .9fr 1.1fr; gap: 50px; padding: clamp(38px, 6vw, 76px); }
 .service-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .service-chip { min-height: 160px; border: 1px solid rgba(255,255,255,.13); border-radius: 24px; background: rgba(255,255,255,.06); padding: 20px; }
-.service-chip-icon { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid rgba(243,185,31,.7); border-radius: 10px; background: rgba(243,185,31,.14); box-shadow: 0 0 0 3px rgba(243,185,31,.055), inset 0 0 0 1px rgba(255,255,255,.06); }
-.service-chip-icon svg { width: 15px; height: 15px; color: #f3b91f; stroke-width: 2; }
+.service-chip-icon { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid rgba(243,185,31,.7); border-radius: 8px; background: rgba(243,185,31,.14); }
+.service-chip-icon svg { width: 13px; height: 13px; color: #f3b91f; stroke-width: 2; }
+.service-location { min-width: 0; }
+.service-location .eyebrow { margin-bottom: 18px; }
+.service-map { height: 260px; overflow: hidden; border: 1px solid rgba(255,255,255,.18); border-radius: 20px; background: #fff; }
+.service-map iframe { display: block; width: 100%; height: 100%; border: 0; }
+.service-address { display: flex; align-items: center; gap: 9px; margin-top: 16px; color: #fff; font-size: .88rem; line-height: 1.45; }
+.service-address svg { width: 17px; height: 17px; flex: none; color: #f3b91f; }
+.service-address:hover { color: #f3b91f; }
 .service-chip h3 { margin: 14px 0 6px; }
 .service-chip p { margin: 0; color: rgba(255,255,255,.62); font-size: .8rem; line-height: 1.5; }
 .benefit-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }

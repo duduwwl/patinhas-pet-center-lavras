@@ -4,10 +4,10 @@ import { RotateCcw, Search, SlidersHorizontal } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
 import { products } from "@/lib/catalog";
 type Sort = "destaques" | "menor" | "maior" | "recentes";
-export function ShopCatalog({ initialQuery = "", initialAnimal = "", onlyOffers = false }: { initialQuery?: string; initialAnimal?: string; onlyOffers?: boolean }) {
+export function ShopCatalog({ initialQuery = "", initialAnimal = "", initialCategory = "", onlyOffers = false }: { initialQuery?: string; initialAnimal?: string; initialCategory?: string; onlyOffers?: boolean }) {
   const [query, setQuery] = useState(initialQuery);
   const [animal, setAnimal] = useState(initialAnimal);
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(initialCategory);
   const [brand, setBrand] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [onlyPromo, setOnlyPromo] = useState(onlyOffers);
