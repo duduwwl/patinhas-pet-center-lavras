@@ -5,7 +5,7 @@ Site da Patinhas Pet Center, em Lavras (MG), com catálogo para cães, gatos e o
 ## Duas edições no mesmo repositório
 
 - **Aplicação completa:** `app/`, `components/`, `lib/`, `db/` e `public/`. Usa Vinext/Next, Cloudflare Worker, D1 e rotas de servidor para conta, sacola, pedidos, agendamentos e integração de pagamento. A configuração de hospedagem Sites está em `.openai/hosting.json`.
-- **GitHub Pages:** `pages-src/` é a edição estática; `docs/` é o resultado pronto para publicação. Ela oferece catálogo com busca, filtros, favoritos e sacola locais, além de pedido e solicitação de banho e tosa enviados para confirmação pelo WhatsApp. Não há autenticação, reserva automática, estoque em tempo real ou pagamento online no Pages. Não use o Pages como substituto do backend da aplicação completa.
+- **Demonstração estática:** `pages-src/` é uma edição de referência; `docs/` é seu resultado compilado. Ela oferece catálogo com busca, filtros, favoritos e sacola locais, além de pedido e solicitação de banho e tosa enviados para confirmação pelo WhatsApp. Não há autenticação, reserva automática, estoque em tempo real ou pagamento online nessa edição. Não a use como substituto do backend da aplicação completa.
 
 Os produtos e valores são demonstrativos e precisam de confirmação com a loja. As imagens do catálogo são ilustrativas. Nenhuma chave de pagamento é incluída neste repositório.
 
@@ -24,13 +24,13 @@ Para compilar a aplicação completa:
 npm run build
 ```
 
-Para regenerar a edição do GitHub Pages após alterar o catálogo ou o visual:
+Para regenerar a edição estática após alterar o catálogo ou o visual:
 
 ```sh
 npm run build:pages
 ```
 
-O build estático copia as imagens públicas necessárias para `docs/images/` e gera `docs/index.html`. O GitHub Pages deve apontar para a branch `main`, pasta `/docs`.
+O build estático copia as imagens públicas necessárias para `docs/images/` e gera `docs/index.html`. O GitHub Pages não deve ser ativado para esta loja: [as regras do serviço não permitem hospedá-lo como site de e-commerce ou negócio online](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits). Para colocar a loja no ar, use uma hospedagem comercial compatível com a aplicação e seu backend.
 
 ## Configuração de produção
 

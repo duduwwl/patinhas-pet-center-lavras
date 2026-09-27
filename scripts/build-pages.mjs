@@ -10,6 +10,7 @@ const outputImages = join(outputRoot, "images");
 
 await mkdir(join(sourceRoot, "images"), { recursive: true });
 await copyFile(join(sourceImages, "hero-patinhas.png"), join(sourceRoot, "images", "hero-patinhas.png"));
+await copyFile(join(sourceImages, "interior-patinhas.png"), join(sourceRoot, "images", "interior-patinhas.png"));
 
 await build({
   configFile: false,
@@ -25,4 +26,4 @@ for (const filename of await readdir(sourceImages)) {
 }
 await copyFile(join(projectRoot, "public", "favicon.svg"), join(outputRoot, "favicon.svg"));
 await writeFile(join(outputRoot, ".nojekyll"), "");
-console.log(`GitHub Pages gerado em ${outputRoot}`);
+console.log(`Edição estática gerada em ${outputRoot}`);
