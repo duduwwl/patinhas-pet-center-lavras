@@ -19,7 +19,6 @@ const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (char) => ({ "&"
 const wa = (message: string) => `https://wa.me/${store.whatsapp}?text=${encodeURIComponent(message)}`;
 
 function updateCounts() {
-  $("#favorites-count").textContent = String(favorites.size);
   $("#cart-count").textContent = String(Object.values(cart).reduce((sum, quantity) => sum + quantity, 0));
 }
 
@@ -94,7 +93,6 @@ function init() {
     if (target.closest(".dialog-close")) target.closest("dialog")?.close();
     if (target.closest("#add-detail")) { const id = target.closest<HTMLElement>("#add-detail")!.dataset.id!; cart[id] = (cart[id] ?? 0) + 1; storage.set(cartKey, cart); updateCounts(); $<HTMLDialogElement>("#product-dialog").close(); renderCart(); $<HTMLDialogElement>("#cart-dialog").showModal(); }
   });
-  $("#favorites-toggle").addEventListener("click", () => { favoritesOnly = !favoritesOnly; renderProducts(); location.hash = "loja"; });
   $("#cart-toggle").addEventListener("click", () => { renderCart(); $<HTMLDialogElement>("#cart-dialog").showModal(); });
   $<HTMLFormElement>("#booking-form").addEventListener("submit", (event) => { event.preventDefault(); const form = new FormData(event.currentTarget as HTMLFormElement); const name = String(form.get("name") ?? "").trim(); const pet = String(form.get("pet") ?? "").trim(); const service = String(form.get("service") ?? "").trim(); const date = String(form.get("date") ?? "").trim(); if (!name || !pet || !service || !date) return; window.open(wa(`Olá! Sou ${name}. Gostaria de solicitar ${service} para ${pet} na data ${date}. Podem confirmar disponibilidade e valor?`), "_blank", "noopener,noreferrer"); });
   updateCounts(); renderProducts(); setupAnimation();
