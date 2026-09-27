@@ -17,7 +17,7 @@ export function HeroSequence() {
         if (motion.matches) video.classList.remove("is-playing");
         return;
       }
-      if (!video.src) video.src = "/videos/hero-patinhas-completo.mp4";
+      if (!video.src) video.src = "/videos/hero-patinhas-natural-hq.mp4";
       video.play().then(() => {
         if (!disposed) video.classList.add("is-playing");
       }).catch(() => video.classList.remove("is-playing"));
