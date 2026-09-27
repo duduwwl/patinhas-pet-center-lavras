@@ -1,5 +1,5 @@
 import { build } from "vite";
-import { copyFile, mkdir, readdir, writeFile } from "node:fs/promises";
+import { copyFile, cp, mkdir, readdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
 const projectRoot = resolve(import.meta.dirname, "..");
@@ -25,5 +25,6 @@ for (const filename of await readdir(sourceImages)) {
   await copyFile(join(sourceImages, filename), join(outputImages, filename));
 }
 await copyFile(join(projectRoot, "public", "favicon.svg"), join(outputRoot, "favicon.svg"));
+await cp(join(projectRoot, "public", "videos"), join(outputRoot, "videos"), { recursive: true });
 await writeFile(join(outputRoot, ".nojekyll"), "");
 console.log(`Edição estática gerada em ${outputRoot}`);

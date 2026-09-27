@@ -51,12 +51,26 @@ function renderCart() {
 }
 
 function setupAnimation() {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const frames = ["hero-patinhas-frame-turn.png", "hero-patinhas-frame-approach.png", "hero-patinhas-interaction.png", "hero-patinhas-frame-reaction.png", "hero-patinhas-frame-release.png"];
-  Promise.all(frames.map((file) => new Promise<void>((resolve) => { const image = new Image(); image.onload = image.onerror = () => resolve(); image.src = `./images/${file}`; }))).then(() => {
-    const timings = [350, 1400, 2450, 3650, 4750, 6200];
-    timings.forEach((delay, index) => window.setTimeout(() => { $("#hero-image").style.backgroundImage = `url('./images/${frames[index] ?? "hero-patinhas.png"}')`; }, delay));
-  });
+  const video = $<HTMLVideoElement>("#hero-video");
+  const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let visible = true;
+  const sync = () => {
+    if (motion.matches || document.hidden || !visible) {
+      video.pause();
+      if (motion.matches) video.classList.remove("is-playing");
+      return;
+    }
+    if (!video.src) video.src = "./videos/hero-patinhas-completo.mp4";
+    video.play().then(() => video.classList.add("is-playing")).catch(() => {
+      // Autoplay can be disabled by a browser; keep the original photo visible.
+      video.classList.remove("is-playing");
+    });
+  };
+  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }, { threshold: .05 }).observe(video);
+  motion.addEventListener("change", sync);
+  document.addEventListener("visibilitychange", sync);
+  video.addEventListener("error", () => video.classList.remove("is-playing"));
+  sync();
 }
 
 function init() {

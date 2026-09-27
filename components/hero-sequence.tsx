@@ -1,54 +1,51 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-const frames = [
-  "/images/hero-patinhas-frame-turn.png",
-  "/images/hero-patinhas-frame-approach.png",
-  "/images/hero-patinhas-interaction.png",
-  "/images/hero-patinhas-frame-reaction.png",
-  "/images/hero-patinhas-frame-release.png",
-];
+import { useEffect, useRef } from "react";
 
 export function HeroSequence() {
-  const [activeFrame, setActiveFrame] = useState(-1);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    let cancelled = false;
-    let timers: number[] = [];
-
-    // Wait for every full-size frame before starting so a slow connection
-    // cannot skip the action while its images are still downloading.
-    Promise.all(frames.map((src) => new Promise<void>((resolve) => {
-      const image = new window.Image();
-      image.onload = () => resolve();
-      image.onerror = () => resolve();
-      image.src = src;
-    }))).then(() => {
-      if (cancelled) return;
-      const timings = [350, 1400, 2450, 3650, 4750, 6200];
-      timers = timings.map((time, index) =>
-        window.setTimeout(() => setActiveFrame(index < frames.length ? index : -1), time),
-      );
-    });
-
+    const video = videoRef.current;
+    if (!video) return;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let visible = true;
+    let disposed = false;
+    const sync = () => {
+      if (motion.matches || document.hidden || !visible) {
+        video.pause();
+        if (motion.matches) video.classList.remove("is-playing");
+        return;
+      }
+      if (!video.src) video.src = "/videos/hero-patinhas-completo.mp4";
+      video.play().then(() => {
+        if (!disposed) video.classList.add("is-playing");
+      }).catch(() => video.classList.remove("is-playing"));
+    };
+    const fallback = () => video.classList.remove("is-playing");
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      sync();
+    }, { threshold: .05 });
+    observer.observe(video);
+    motion.addEventListener("change", sync);
+    document.addEventListener("visibilitychange", sync);
+    video.addEventListener("error", fallback);
+    sync();
     return () => {
-      cancelled = true;
-      timers.forEach(window.clearTimeout);
+      disposed = true;
+      observer.disconnect();
+      motion.removeEventListener("change", sync);
+      document.removeEventListener("visibilitychange", sync);
+      video.removeEventListener("error", fallback);
+      video.pause();
     };
   }, []);
 
   return (
     <div className="hero-sequence" aria-hidden="true">
-      {frames.map((src, index) => (
-        <div
-          key={src}
-          className={`hero-frame${activeFrame === index ? " is-active" : ""}`}
-          style={{ "--frame-image": `url("${src}")` } as React.CSSProperties}
-        />
-      ))}
+      <video ref={videoRef} className="hero-video" muted loop playsInline preload="none" tabIndex={-1} />
+      <div className="hero-video-shade" />
     </div>
   );
 }
