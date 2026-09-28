@@ -11,6 +11,12 @@ Os produtos e valores são demonstrativos e precisam de confirmação com a loja
 
 O checkout estático não solicita dados de cartão, não gera Pix e não cobra valores. Frete, prazo e pagamento dependem de confirmação da equipe. Dados do cliente ficam apenas no formulário aberto e são limpos ao fechá-lo; somente a sacola e os favoritos usam armazenamento local. O botão final abre o WhatsApp com a mensagem preenchida, mas o cliente ainda precisa enviá-la. Nenhum pedido é registrado automaticamente no servidor.
 
+### Sequência visual do cachorro e do gato
+
+O hero usa `public/videos/hero-patinhas-ordered-v3.mp4`: 12 segundos, 30 fps e 360 frames em ordem. A origem são seis fotografias de poses, não um clipe contínuo. As etapas são repouso, virada, aproximação, lambida, reação, afastamento e retorno. Transições curtas com suavização substituem o optical flow que deformava os rostos. Cenário, piso, corpos e patas permanecem na fotografia de referência; somente a região das cabeças recebe as transições. Início e fim usam a mesma pose para a emenda do loop.
+
+Para reconstruir: `node scripts/build-hero-video.mjs <caminho-do-ffmpeg>`. O script registra a fase e o tempo de cada frame em `.sites-runtime/hero-ordered-*/frame-order.json`. Verifique todos os frames decodificados com `node scripts/check-hero-video.mjs <ffmpeg> public/videos/hero-patinhas-ordered-v3.mp4 <frame-order.json>`. Movimento anatômico verdadeiramente contínuo exige substituir as fotografias por um vídeo original; mais frames codificados não inventam esses movimentos.
+
 ## Desenvolvimento
 
 Requer Node.js 22.13 ou superior.
