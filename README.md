@@ -5,9 +5,11 @@ Site da Patinhas Pet Center, em Lavras (MG), com catálogo para cães, gatos e o
 ## Duas edições no mesmo repositório
 
 - **Aplicação completa:** `app/`, `components/`, `lib/`, `db/` e `public/`. Usa Vinext/Next, Cloudflare Worker, D1 e rotas de servidor para conta, sacola, pedidos, agendamentos e integração de pagamento. A configuração de hospedagem Sites está em `.openai/hosting.json`.
-- **Demonstração estática:** `pages-src/` é uma edição de referência; `docs/` é seu resultado compilado. Ela oferece catálogo com busca, filtros, favoritos e sacola locais, além de pedido e solicitação de banho e tosa enviados para confirmação pelo WhatsApp. Não há autenticação, reserva automática, estoque em tempo real ou pagamento online nessa edição. Não a use como substituto do backend da aplicação completa.
+- **Demonstração estática:** `pages-src/` é uma edição de referência; `docs/` é seu resultado compilado. Ela oferece catálogo com busca, filtros, favoritos e sacola locais, além de checkout assistido e solicitação de banho e tosa enviados para confirmação pelo WhatsApp. No checkout, o cliente informa seus dados, escolhe retirada ou entrega e Pix, débito ou crédito, revisa o pedido e abre a mensagem para a loja. Não há autenticação, reserva automática, estoque em tempo real ou pagamento online nessa edição. Não a use como substituto do backend da aplicação completa.
 
 Os produtos e valores são demonstrativos e precisam de confirmação com a loja. As imagens do catálogo são ilustrativas. Nenhuma chave de pagamento é incluída neste repositório.
+
+O checkout estático não solicita dados de cartão, não gera Pix e não cobra valores. Frete, prazo e pagamento dependem de confirmação da equipe. Dados do cliente ficam apenas no formulário aberto e são limpos ao fechá-lo; somente a sacola e os favoritos usam armazenamento local. O botão final abre o WhatsApp com a mensagem preenchida, mas o cliente ainda precisa enviá-la. Nenhum pedido é registrado automaticamente no servidor.
 
 ## Desenvolvimento
 

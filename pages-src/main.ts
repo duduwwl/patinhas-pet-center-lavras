@@ -1,5 +1,7 @@
 import "./style.css";
+import "./checkout.css";
 import { products, formatPrice, store, type Product } from "../lib/catalog";
+import { getCartEntries, subtotal, setupCheckout } from "./checkout";
 
 const $ = <T = HTMLElement>(selector: string) => document.querySelector(selector)! as unknown as T;
 const storage = {
@@ -19,7 +21,7 @@ const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (char) => ({ "&"
 const wa = (message: string) => `https://wa.me/${store.whatsapp}?text=${encodeURIComponent(message)}`;
 
 function updateCounts() {
-  $("#cart-count").textContent = String(Object.values(cart).reduce((sum, quantity) => sum + quantity, 0));
+  $("#cart-count").textContent = String(getCartEntries(cart).reduce((sum, entry) => sum + entry.quantity, 0));
 }
 
 function renderProducts() {
@@ -43,10 +45,9 @@ function openProduct(product: Product) {
 }
 
 function renderCart() {
-  const entries = Object.entries(cart).map(([id, quantity]) => ({ product: products.find((candidate) => candidate.id === id), quantity })).filter((entry): entry is { product: Product; quantity: number } => !!entry.product && entry.product.price !== null && entry.quantity > 0);
-  const total = entries.reduce((sum, { product, quantity }) => sum + (product.price ?? 0) * quantity, 0);
-  $("#cart-items").innerHTML = entries.length ? entries.map(({ product, quantity }) => `<div class="cart-line"><div><strong>${escapeHtml(product.name)}</strong><small>${quantity} × ${formatPrice(product.price)}</small></div><button type="button" data-remove="${escapeHtml(product.id)}">Remover</button></div>`).join("") : "<p>Sua sacola está vazia. Explore os produtos da loja.</p>";
-  $("#cart-footer").innerHTML = entries.length ? `<div class="cart-total"><span>Subtotal estimado</span><span>${formatPrice(total)}</span></div><p class="notice">Preço e disponibilidade dependem de confirmação da equipe. Não há pagamento online nesta versão.</p><a class="button button-burgundy" href="${wa(`Olá! Gostaria de consultar este pedido da loja Patinhas:\n${entries.map(({ product, quantity }) => `• ${quantity} × ${product.name}`).join("\n")}\nSubtotal estimado: ${formatPrice(total)}. Podem confirmar preços e disponibilidade?`)}" target="_blank" rel="noreferrer">Enviar pedido pelo WhatsApp</a>` : "";
+  const entries = getCartEntries(cart);
+  $("#cart-items").innerHTML = entries.length ? entries.map(({ product, quantity }) => `<div class="cart-line"><div><strong>${escapeHtml(product.name)}</strong><small>${quantity} × ${formatPrice(product.price)}</small><div class="cart-quantity"><button type="button" data-quantity="${escapeHtml(product.id)}" data-delta="-1" aria-label="Diminuir quantidade de ${escapeHtml(product.name)}" ${quantity <= 1 ? "disabled" : ""}>−</button><span>${quantity}</span><button type="button" data-quantity="${escapeHtml(product.id)}" data-delta="1" aria-label="Aumentar quantidade de ${escapeHtml(product.name)}" ${quantity >= 99 ? "disabled" : ""}>+</button></div></div><button type="button" data-remove="${escapeHtml(product.id)}">Remover</button></div>`).join("") : "<p>Sua sacola está vazia. Explore os produtos da loja.</p>";
+  $("#cart-footer").innerHTML = entries.length ? `<div class="cart-total"><span>Subtotal estimado</span><span>${formatPrice(subtotal(entries))}</span></div><p class="notice">Escolha retirada ou entrega e Pix, débito ou crédito. Valores e condições serão confirmados pela equipe.</p><button type="button" class="button button-burgundy" id="checkout-open">Continuar para o checkout →</button>` : "";
 }
 
 function setupAnimation() {
@@ -73,6 +74,7 @@ function setupAnimation() {
 }
 
 function init() {
+  const openCheckout = setupCheckout(() => getCartEntries(cart));
   $("#catalog-total").textContent = `${products.length} produtos · ${new Set(products.map((product) => product.category)).size} categorias`;
   const categories = [...new Set(products.map((product) => product.category))].sort((a, b) => a.localeCompare(b, "pt-BR"));
   $<HTMLSelectElement>("#category-filter").insertAdjacentHTML("beforeend", categories.map((name) => `<option>${escapeHtml(name)}</option>`).join(""));
@@ -83,15 +85,18 @@ function init() {
     const favorite = target.closest<HTMLElement>("[data-favorite]");
     const productButton = target.closest<HTMLElement>("[data-product]");
     const remove = target.closest<HTMLElement>("[data-remove]");
+    const quantityButton = target.closest<HTMLButtonElement>("[data-quantity]");
     const animalLink = target.closest<HTMLElement>("[data-animal-link], [data-animal-card]");
     const categoryLink = target.closest<HTMLElement>("[data-category-card]");
     if (favorite) { const id = favorite.dataset.favorite!; if (favorites.has(id)) favorites.delete(id); else favorites.add(id); storage.set(favoriteKey, [...favorites]); updateCounts(); renderProducts(); }
     if (productButton) { const product = products.find((item) => item.id === productButton.dataset.product); if (product) openProduct(product); }
     if (remove) { delete cart[remove.dataset.remove!]; storage.set(cartKey, cart); updateCounts(); renderCart(); }
+    if (quantityButton && !quantityButton.disabled) { const id = quantityButton.dataset.quantity!; cart[id] = Math.max(1, Math.min(99, (cart[id] ?? 1) + Number(quantityButton.dataset.delta))); storage.set(cartKey, cart); updateCounts(); renderCart(); }
+    if (target.closest("#checkout-open")) openCheckout();
     if (animalLink) { $<HTMLSelectElement>("#animal-filter").value = animalLink.dataset.animalLink ?? animalLink.dataset.animalCard ?? ""; $<HTMLSelectElement>("#category-filter").value = ""; favoritesOnly = false; renderProducts(); location.hash = "loja"; }
     if (categoryLink) { $<HTMLSelectElement>("#category-filter").value = categoryLink.dataset.categoryCard ?? ""; $<HTMLSelectElement>("#animal-filter").value = ""; favoritesOnly = false; renderProducts(); location.hash = "loja"; }
     if (target.closest(".dialog-close")) target.closest("dialog")?.close();
-    if (target.closest("#add-detail")) { const id = target.closest<HTMLElement>("#add-detail")!.dataset.id!; cart[id] = (cart[id] ?? 0) + 1; storage.set(cartKey, cart); updateCounts(); $<HTMLDialogElement>("#product-dialog").close(); renderCart(); $<HTMLDialogElement>("#cart-dialog").showModal(); }
+    if (target.closest("#add-detail")) { const id = target.closest<HTMLElement>("#add-detail")!.dataset.id!; const current = getCartEntries(cart).find((entry) => entry.product.id === id)?.quantity ?? 0; cart[id] = Math.min(99, current + 1); storage.set(cartKey, cart); updateCounts(); $<HTMLDialogElement>("#product-dialog").close(); renderCart(); $<HTMLDialogElement>("#cart-dialog").showModal(); }
   });
   $("#cart-toggle").addEventListener("click", () => { renderCart(); $<HTMLDialogElement>("#cart-dialog").showModal(); });
   $<HTMLFormElement>("#booking-form").addEventListener("submit", (event) => { event.preventDefault(); const form = new FormData(event.currentTarget as HTMLFormElement); const name = String(form.get("name") ?? "").trim(); const pet = String(form.get("pet") ?? "").trim(); const service = String(form.get("service") ?? "").trim(); const date = String(form.get("date") ?? "").trim(); if (!name || !pet || !service || !date) return; window.open(wa(`Olá! Sou ${name}. Gostaria de solicitar ${service} para ${pet} na data ${date}. Podem confirmar disponibilidade e valor?`), "_blank", "noopener,noreferrer"); });

@@ -1,0 +1,32 @@
+.checkout-dialog{width:min(1050px,calc(100% - 28px));max-height:92vh;padding:32px;background:#fffcf6;color:#1b191d}
+.checkout-dialog h2{font-size:clamp(1.9rem,4vw,2.6rem);margin:0 0 24px}
+.checkout-dialog h3{margin:0 0 16px;font-size:1.15rem}
+.checkout-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:30px;align-items:start}
+.checkout-form{display:grid;gap:22px}.checkout-form[hidden],.checkout-ready[hidden],.checkout-form fieldset[hidden]{display:none}
+.checkout-form fieldset{border:0;padding:0;margin:0;min-width:0}
+.checkout-form legend{font-size:1rem;font-weight:800;margin-bottom:12px;padding:0}
+.checkout-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.checkout-field{display:grid;gap:7px;font-size:.875rem;font-weight:600;min-width:0}
+.checkout-wide{grid-column:1/-1}.checkout-field small{font-weight:400;color:#756b64}
+.checkout-field input,.checkout-field select,.checkout-field textarea{width:100%;min-width:0;min-height:46px;border:1px solid #ded2c5;border-radius:12px;padding:11px 12px;background:#fff;color:#1b191d;font:inherit;font-size:1rem}
+.checkout-field textarea{resize:vertical;min-height:82px}
+.checkout-field input:focus,.checkout-field select:focus,.checkout-field textarea:focus{outline:2px solid #8b1937;outline-offset:2px}
+.checkout-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.checkout-payments{grid-template-columns:repeat(3,minmax(0,1fr))}
+.checkout-choice{display:flex;align-items:center;gap:9px;padding:13px 11px;border:1px solid #e1d7cb;border-radius:13px;background:#fff;font-size:.875rem;cursor:pointer;min-width:0}
+.checkout-choice:has(input:checked){border-color:#8b1937;background:#8b193709;box-shadow:0 0 0 1px #8b1937}
+.checkout-choice input{accent-color:#8b1937;flex:none;width:17px;height:17px;margin:0}.checkout-choice strong{font-weight:700}
+.checkout-help{font-size:.875rem;line-height:1.6;color:#6c625a;margin:12px 0 0}
+.checkout-pickup{background:#f5f0e7;border-radius:12px;padding:13px;font-size:.875rem;line-height:1.6;margin-top:12px}
+.checkout-pickup p{margin:4px 0}.checkout-address{margin-top:16px!important}
+.checkout-summary{background:#fff;border:1px solid #e6dcd0;border-radius:19px;padding:22px}
+.checkout-item{display:flex;align-items:start;justify-content:space-between;gap:14px;padding:14px 0;border-bottom:1px solid #ece4da;font-size:.875rem}
+.checkout-item strong{display:block;line-height:1.45}.checkout-item small{display:block;margin-top:6px;line-height:1.4;color:#756b64}.checkout-item>span{white-space:nowrap;font-weight:700}
+.checkout-totals{display:grid;gap:14px;margin:22px 0 12px}.checkout-totals>div{display:flex;justify-content:space-between;gap:16px;font-size:.875rem}.checkout-totals dt,.checkout-totals dd{margin:0}.checkout-totals dd{text-align:right}.checkout-totals>div:first-child{font-weight:800;font-size:1rem}
+.checkout-assurance{border-top:1px solid #ece4da;margin-top:18px;padding-top:18px;font-size:.875rem;line-height:1.6;color:#6c625a}
+.checkout-consent{display:flex;align-items:start;gap:10px;font-size:.875rem;line-height:1.6}.checkout-consent input{margin-top:5px;accent-color:#8b1937;flex:none;width:17px;height:17px}
+.checkout-submit{width:100%;font-size:.95rem}.checkout-error{color:#8b1937;font-size:.875rem}
+.checkout-review{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f0e7;border-radius:14px;padding:18px;font:inherit;font-size:.875rem;line-height:1.65;margin:20px 0}
+.checkout-ready p{font-size:1rem;line-height:1.65}.checkout-ready .button{margin:0 8px 10px 0}.checkout-back{margin-bottom:20px;background:none;border:0;padding:0;color:#8b1937;font-size:.875rem;font-weight:700}
+.cart-line{align-items:center}.cart-quantity{display:flex;align-items:center;gap:8px;margin-top:9px}.cart-quantity button{width:30px;height:30px;border:1px solid #e1d7cb;border-radius:7px;background:#fffcf6}.cart-quantity button:disabled{opacity:.4;cursor:default}
+@media(max-width:760px){.checkout-layout{grid-template-columns:1fr}.checkout-dialog{padding:26px 20px}.checkout-summary{order:-1}.checkout-item{padding:10px 0}.checkout-dialog .dialog-close{right:12px}.checkout-dialog .eyebrow{padding-right:26px}}
+@media(max-width:480px){.checkout-fields,.checkout-options{grid-template-columns:1fr}.checkout-payments{grid-template-columns:1fr}.checkout-dialog{padding:26px 16px}.checkout-dialog h2{font-size:1.9rem}.checkout-item{font-size:.8rem}.checkout-ready .button{width:100%;margin-right:0}}
